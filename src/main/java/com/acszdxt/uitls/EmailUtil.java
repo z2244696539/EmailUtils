@@ -1,26 +1,22 @@
 package com.acszdxt.uitls;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
-import org.apache.commons.mail.SimpleEmail;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
-import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * Created with IntelliJ IDEA.
  *
  * @Author: 爱吃山楂的小天
  * @Date: 2023/05/10/18:00
- * @Description:
+ * @Description: 发送邮件
  */
 @Component
 @Slf4j
@@ -46,16 +42,16 @@ public class EmailUtil {
     @Resource
     private FileUtils fileUtils;
 
-    private final String SUBJECT = "We have a special offer on sea freight. The following is part of the airline price, please check. If you need other routes, please contact me";
+
     /**
      * 发送邮件
      *
      * @param ToEmail 目标邮箱
-    // * @param subject 主题
-    // * @param message 发送消息
-     * @param bcc 密送
+     * @param subject 主题
+     * * @param message 发送消息
+     * @param bcc     密送
      */
-    public boolean sendEmail(String ToEmail, ArrayList<InternetAddress> bcc) {
+    public boolean sendEmail(String ToEmail, ArrayList<InternetAddress> bcc, String subject) {
         HtmlEmail email = new HtmlEmail();
 
         //邮件服务器端口号
@@ -73,15 +69,16 @@ public class EmailUtil {
             //设置源邮箱
             email.setFrom(username);
             //设置邮件主题
-            email.setSubject(SUBJECT);
+            email.setSubject(subject);
             //设置邮件内容
             email.setMsg(fileUtils.readFile());
-            //
+            // 密送成员
             email.setBcc(bcc);
             //发送
             email.send();
+            Thread.sleep(1000);
             return true;
-        } catch (EmailException e) {
+        } catch (EmailException | InterruptedException e) {
             e.printStackTrace();
             return false;
         }
